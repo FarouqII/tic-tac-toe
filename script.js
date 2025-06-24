@@ -55,31 +55,51 @@ function Game() {
     const switchActivePlayer = () => activePlayer = activePlayer === players[0] ? players[1] : players[0];
     const printRound = () => board.printBoard();
 
+    const userInput = () => {
+        let coords = prompt("Where do you want to put your sign: ");
+        let coordsArray = coords.split(" ");
+        playRound(coordsArray[0], coordsArray[1]);
+    }
+
     const playRound = (x, y) => {
         board.playCell(x, y, activePlayer.sign);
         console.log(checkWinner(x, y, activePlayer.sign));
         turn++;
+        console.log(turn);
         switchActivePlayer();
         printRound();
-        console.log(`${activePlayer.name}'s turn`)
+        if (turn >= 9) {
+            console.log("Round Over!")
+            return;
+        }
+        console.log(`${activePlayer.name}'s turn`);
+        userInput();
     }
 
     const checkWinner = (x, y, sign) => {
         const gameboard = board.getBoard();
-        if (gameboard.every(el => el[y].getValue === sign)) return "W";
-        if (gameboard[x].every(el => el.getValue === sign)) return "W";
-        if (x === y && [0, 1, 2].every(i => gameboard[i][i].getValue() === sign)) return "W";
-        if (x + y === 2 && [0, 1, 2].every(i => gameboard[i][2 - i].getValue() === sign)) return "W";
+        if (gameboard.every(el => el[y].getValue() === sign)) {
+            turn = 9;
+            return "W"
+        };
+        if (gameboard[x].every(el => el.getValue() === sign)) {
+            turn = 9;
+            return "W"
+        };
+        if (x === y && [0, 1, 2].every(i => gameboard[i][i].getValue() === sign)) {
+            turn = 9;
+            return "W"
+        };
+        if (x + y === 2 && [0, 1, 2].every(i => gameboard[i][2 - i].getValue() === sign)) {
+            turn = 9;
+            return "W"
+        };
         return "N";
     }
 
     printRound();
-    return { playRound, getActivePlayer }
+    return { userInput, playRound, getActivePlayer }
 }
 
 const game = Game();
-game.playRound(0, 0); // Player One plays X in top-left
-game.playRound(1, 0); // Player Two plays O in center
-game.playRound(2, 2); // Player One plays X in bottom-right
-game.playRound(0, 1);
-game.playRound(1, 1);
+game.userInput();
