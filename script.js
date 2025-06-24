@@ -59,17 +59,34 @@ function Game() {
         board.playCell(x, y, activePlayer.sign);
         console.log(checkWinner(x, y, activePlayer.sign));
         turn++;
+        console.log(turn);
         switchActivePlayer();
         printRound();
+        if (turn > 9) {
+            console.log("Round Over!")
+            return;
+        }
         console.log(`${activePlayer.name}'s turn`)
     }
 
     const checkWinner = (x, y, sign) => {
         const gameboard = board.getBoard();
-        if (gameboard.every(el => el[y].getValue === sign)) return "W";
-        if (gameboard[x].every(el => el.getValue === sign)) return "W";
-        if (x === y && [0, 1, 2].every(i => gameboard[i][i].getValue() === sign)) return "W";
-        if (x + y === 2 && [0, 1, 2].every(i => gameboard[i][2 - i].getValue() === sign)) return "W";
+        if (gameboard.every(el => el[y].getValue === sign)) {
+            turn = 9;
+            return "W"
+        };
+        if (gameboard[x].every(el => el.getValue === sign)) {
+            turn = 9;
+            return "W"
+        };
+        if (x === y && [0, 1, 2].every(i => gameboard[i][i].getValue() === sign)) {
+            turn = 9;
+            return "W"
+        };
+        if (x + y === 2 && [0, 1, 2].every(i => gameboard[i][2 - i].getValue() === sign)) {
+            turn = 9;
+            return "W"
+        };
         return "N";
     }
 
@@ -78,8 +95,3 @@ function Game() {
 }
 
 const game = Game();
-game.playRound(0, 0); // Player One plays X in top-left
-game.playRound(1, 0); // Player Two plays O in center
-game.playRound(2, 2); // Player One plays X in bottom-right
-game.playRound(0, 1);
-game.playRound(1, 1);
