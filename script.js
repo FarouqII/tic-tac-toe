@@ -55,6 +55,12 @@ function Game() {
     const switchActivePlayer = () => activePlayer = activePlayer === players[0] ? players[1] : players[0];
     const printRound = () => board.printBoard();
 
+    const userInput = () => {
+        let coords = prompt("Where do you want to put your sign: ");
+        let coordsArray = coords.split(" ");
+        playRound(coordsArray[0], coordsArray[1]);
+    }
+
     const playRound = (x, y) => {
         board.playCell(x, y, activePlayer.sign);
         console.log(checkWinner(x, y, activePlayer.sign));
@@ -62,20 +68,21 @@ function Game() {
         console.log(turn);
         switchActivePlayer();
         printRound();
-        if (turn > 9) {
+        if (turn >= 9) {
             console.log("Round Over!")
             return;
         }
-        console.log(`${activePlayer.name}'s turn`)
+        console.log(`${activePlayer.name}'s turn`);
+        userInput();
     }
 
     const checkWinner = (x, y, sign) => {
         const gameboard = board.getBoard();
-        if (gameboard.every(el => el[y].getValue === sign)) {
+        if (gameboard.every(el => el[y].getValue() === sign)) {
             turn = 9;
             return "W"
         };
-        if (gameboard[x].every(el => el.getValue === sign)) {
+        if (gameboard[x].every(el => el.getValue() === sign)) {
             turn = 9;
             return "W"
         };
@@ -91,7 +98,8 @@ function Game() {
     }
 
     printRound();
-    return { playRound, getActivePlayer }
+    return { userInput, playRound, getActivePlayer }
 }
 
 const game = Game();
+game.userInput();
