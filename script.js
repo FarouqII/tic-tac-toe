@@ -4,6 +4,7 @@ function Gameboard() {
     const rows = 3;
     const cols = 3;
     let board = [];
+    let gameContainer = document.getElementById("game-container");
 
     // Get/Set
     const getBoard = () => board;
@@ -12,6 +13,15 @@ function Gameboard() {
         board[i] = [];
         for (let j = 0; j < cols; j++) {
             board[i].push(Cell());
+        }
+    }
+
+    const renderBoard = () => {
+        gameContainer.innerHTML = "";
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                gameContainer.innerHTML += `<button class="tile" coords="${i} ${j}"></button>`
+            }
         }
     }
 
@@ -24,7 +34,7 @@ function Gameboard() {
         console.log(board.map(row => row.map(cell => cell.getValue())));
     }
 
-    return { getBoard, playCell, printBoard }
+    return { getBoard, renderBoard, playCell, printBoard }
 }
 
 function Cell() {
@@ -52,8 +62,24 @@ function Game() {
     let activePlayer = players[0];
     const getActivePlayer = () => activePlayer;
 
-    const switchActivePlayer = () => activePlayer = activePlayer === players[0] ? players[1] : players[0];
+    const switchActivePlayer = () => {
+        activePlayer = activePlayer === players[0] ? players[1] : players[0];
+        switchActivePlayerUI();
+    }
+    const switchActivePlayerUI = () => {
+        const xPlayer = document.getElementById("x-p");
+        const oPlayer = document.getElementById("o-p");
+
+        if (activePlayer.sign === "X") {
+            xPlayer.classList.add("active");
+            oPlayer.classList.remove("active");
+        } else {
+            oPlayer.classList.add("active");
+            xPlayer.classList.remove("active");
+        }
+    }
     const printRound = () => board.printBoard();
+    const renderRound = () => board.renderBoard();
 
     const userInput = () => {
         let coords = prompt("Where do you want to put your sign: ");
@@ -68,6 +94,7 @@ function Game() {
         console.log(turn);
         switchActivePlayer();
         printRound();
+        renderRound();
         if (turn >= 9) {
             console.log("Round Over!")
             return;
@@ -98,6 +125,8 @@ function Game() {
     }
 
     printRound();
+    renderRound();
+    switchActivePlayerUI();
     return { userInput, playRound, getActivePlayer }
 }
 
