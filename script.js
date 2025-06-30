@@ -60,12 +60,18 @@ function Game() {
         if (turn >= 9) return;
         board.playCell(x, y, activePlayer.sign);
         turn++;
-        switchActivePlayer();
         renderRound();
-        if (checkWinner(x, y, activePlayer.sign) !== "N") {
+        let result = checkWinner(x, y, activePlayer.sign);
+        if (result !== "N") {
+            let resultDiv = document.getElementById("result");
+            resultDiv.style.opacity = "1";
+            if (result === "W") resultDiv.textContent = `${activePlayer.sign} Wins!`;
+            else if (result === "D") resultDiv.textContent = "Draw!";
+
             console.log("Round Over!")
             return;
         }
+        switchActivePlayer();
     }
 
     const board = Gameboard(playRound);
@@ -112,8 +118,7 @@ function Game() {
             turn = 9;
             return "W"
         };
-        if (turn === 8) {
-            turn = 9;
+        if (turn === 9) {
             return "D";
         }
         return "N";
