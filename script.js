@@ -42,11 +42,7 @@ function Gameboard(onTileClick) {
         cell.setValue(player);
     }
 
-    const printBoard = () => {
-        console.log(board.map(row => row.map(cell => cell.getValue())));
-    }
-
-    return { getBoard, renderBoard, playCell, printBoard }
+    return { getBoard, renderBoard, playCell }
 }
 
 function Cell() {
@@ -61,18 +57,15 @@ function Cell() {
 
 function Game() {
     const playRound = (x, y) => {
+        if (turn >= 9) return;
         board.playCell(x, y, activePlayer.sign);
-        console.log(checkWinner(x, y, activePlayer.sign));
         turn++;
-        console.log(turn);
         switchActivePlayer();
-        printRound();
         renderRound();
-        if (turn >= 9) {
+        if (checkWinner(x, y, activePlayer.sign) !== "N") {
             console.log("Round Over!")
             return;
         }
-        console.log(`${activePlayer.name}'s turn`);
     }
 
     const board = Gameboard(playRound);
@@ -99,7 +92,6 @@ function Game() {
             xPlayer.classList.remove("active");
         }
     }
-    const printRound = () => board.printBoard();
     const renderRound = () => board.renderBoard();
 
     const checkWinner = (x, y, sign) => {
@@ -120,11 +112,13 @@ function Game() {
             turn = 9;
             return "W"
         };
-        if (turn === 8) return "D";
+        if (turn === 8) {
+            turn = 9;
+            return "D";
+        }
         return "N";
     }
 
-    printRound();
     renderRound();
     switchActivePlayerUI();
     return { playRound, getActivePlayer }
