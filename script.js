@@ -4,6 +4,7 @@ function Gameboard() {
     const rows = 3;
     const cols = 3;
     let board = [];
+    let tileElements = [];
     let gameContainer = document.getElementById("game-container");
 
     // Get/Set
@@ -11,19 +12,26 @@ function Gameboard() {
     
     for (let i = 0; i < rows; i++) {
         board[i] = [];
+        tileElements[i] = [];
         for (let j = 0; j < cols; j++) {
             board[i].push(Cell());
+            let tile = document.createElement("button");
+            tile.classList.add("tile");
+            tile.dataset.coords = `${i} ${j}`;
+            tile.textContent = "";
+            gameContainer.appendChild(tile);
+            tileElements[i][j] = tile;
         }
     }
 
     const renderBoard = () => {
-        gameContainer.innerHTML = "";
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
-                gameContainer.innerHTML += `<button class="tile" coords="${i} ${j}"></button>`
+                const value = board[i][j].getValue();
+                tileElements[i][j].textContent = value !== 0 ? value : "";
             }
         }
-    }
+    };
 
     const playCell = (x, y, player) => {
         const cell = board[x][y];
@@ -50,14 +58,8 @@ function Cell() {
 function Game() {
     const board = Gameboard();
     const players = [
-        {
-            name: "Player One",
-            sign: "X"
-        },
-        {
-            name: "Player Two",
-            sign: "O"
-        }
+        {name: "Player One", sign: "X"}, 
+        {name: "Player Two", sign: "O"}
     ]
     let activePlayer = players[0];
     const getActivePlayer = () => activePlayer;
@@ -91,7 +93,6 @@ function Game() {
         board.playCell(x, y, activePlayer.sign);
         console.log(checkWinner(x, y, activePlayer.sign));
         turn++;
-        console.log(turn);
         switchActivePlayer();
         printRound();
         renderRound();
