@@ -23,7 +23,7 @@ function Gameboard(onTileClick) {
             tile.textContent = "";
             tile.addEventListener("click", e => {
                 let coordsArray = e.target.dataset.coords.split(" ");
-                onTileClick(parseInt(coordsArray[0]), parseInt(coordsArray[1]));
+                onTileClick(parseInt(coordsArray[0]), parseInt(coordsArray[1]), board);
             });
             gameContainer.appendChild(tile);
             tileElements[i][j] = tile;
@@ -73,8 +73,8 @@ function Cell() {
 }
 
 function Game() {
-    const playRound = (x, y) => {
-        if (turn >= 9) return;
+    const playRound = (x, y, gameboard) => {
+        if (turn >= 9 || gameboard[x][y].getValue() !== 0) return;
         board.playCell(x, y, activePlayer.sign);
         turn++;
         renderRound();
