@@ -1,4 +1,6 @@
 let turn = 0;
+const resultDiv = document.getElementById("result");
+const resultRestartDiv = document.getElementById("result-restart");
 
 function Gameboard(onTileClick) {
     const rows = 3;
@@ -42,6 +44,21 @@ function Gameboard(onTileClick) {
         cell.setValue(player);
     }
 
+    const resetBoard = () => {
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                board[i][j].setValue(0);
+                tileElements[i][j].textContent = "";
+            }
+        }
+        turn = 0;
+        result.textContent = "";
+        resultRestartDiv.style.opacity = 0;
+    }
+
+    const restartBtn = document.getElementById("restart");
+    restartBtn.addEventListener("click", () => resetBoard());
+
     return { getBoard, renderBoard, playCell }
 }
 
@@ -63,12 +80,10 @@ function Game() {
         renderRound();
         let result = checkWinner(x, y, activePlayer.sign);
         if (result !== "N") {
-            let resultDiv = document.getElementById("result");
-            resultDiv.style.opacity = "1";
+            resultRestartDiv.style.opacity = "1";
             if (result === "W") resultDiv.textContent = `${activePlayer.sign} Wins!`;
             else if (result === "D") resultDiv.textContent = "Draw!";
 
-            console.log("Round Over!")
             return;
         }
         switchActivePlayer();
@@ -104,19 +119,19 @@ function Game() {
         const gameboard = board.getBoard();
         if (gameboard.every(el => el[y].getValue() === sign)) {
             turn = 9;
-            return "W"
+            return "W";
         };
         if (gameboard[x].every(el => el.getValue() === sign)) {
             turn = 9;
-            return "W"
+            return "W";
         };
         if (x === y && [0, 1, 2].every(i => gameboard[i][i].getValue() === sign)) {
             turn = 9;
-            return "W"
+            return "W";
         };
         if (x + y === 2 && [0, 1, 2].every(i => gameboard[i][2 - i].getValue() === sign)) {
             turn = 9;
-            return "W"
+            return "W";
         };
         if (turn === 9) {
             return "D";
