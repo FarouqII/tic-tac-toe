@@ -1,6 +1,6 @@
 let turn = 0;
 
-function Gameboard() {
+function Gameboard(onTileClick) {
     const rows = 3;
     const cols = 3;
     let board = [];
@@ -19,6 +19,10 @@ function Gameboard() {
             tile.classList.add("tile");
             tile.dataset.coords = `${i} ${j}`;
             tile.textContent = "";
+            tile.addEventListener("click", e => {
+                let coordsArray = e.target.dataset.coords.split(" ");
+                onTileClick(parseInt(coordsArray[0]), parseInt(coordsArray[1]));
+            });
             gameContainer.appendChild(tile);
             tileElements[i][j] = tile;
         }
@@ -56,7 +60,22 @@ function Cell() {
 }
 
 function Game() {
-    const board = Gameboard();
+    const playRound = (x, y) => {
+        board.playCell(x, y, activePlayer.sign);
+        console.log(checkWinner(x, y, activePlayer.sign));
+        turn++;
+        console.log(turn);
+        switchActivePlayer();
+        printRound();
+        renderRound();
+        if (turn >= 9) {
+            console.log("Round Over!")
+            return;
+        }
+        console.log(`${activePlayer.name}'s turn`);
+    }
+
+    const board = Gameboard(playRound);
     const players = [
         {name: "Player One", sign: "X"}, 
         {name: "Player Two", sign: "O"}
@@ -83,27 +102,6 @@ function Game() {
     const printRound = () => board.printBoard();
     const renderRound = () => board.renderBoard();
 
-    const userInput = () => {
-        let coords = prompt("Where do you want to put your sign: ");
-        let coordsArray = coords.split(" ");
-        playRound(coordsArray[0], coordsArray[1]);
-    }
-
-    const playRound = (x, y) => {
-        board.playCell(x, y, activePlayer.sign);
-        console.log(checkWinner(x, y, activePlayer.sign));
-        turn++;
-        switchActivePlayer();
-        printRound();
-        renderRound();
-        if (turn >= 9) {
-            console.log("Round Over!")
-            return;
-        }
-        console.log(`${activePlayer.name}'s turn`);
-        userInput();
-    }
-
     const checkWinner = (x, y, sign) => {
         const gameboard = board.getBoard();
         if (gameboard.every(el => el[y].getValue() === sign)) {
@@ -122,14 +120,14 @@ function Game() {
             turn = 9;
             return "W"
         };
+        if (turn === 8) return "D";
         return "N";
     }
 
     printRound();
     renderRound();
     switchActivePlayerUI();
-    return { userInput, playRound, getActivePlayer }
+    return { playRound, getActivePlayer }
 }
 
 const game = Game();
-game.userInput();
